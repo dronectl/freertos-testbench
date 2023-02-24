@@ -16,11 +16,6 @@ if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   message(FATAL_ERROR "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there.")
 endif()
 
-# cmake build guard
-if(NOT DEFINED STM32CUBEF4_BASE)
-  message(FATAL_ERROR "Must provide STM32CUBEF4 (absolute) base path: -DSTM32CUBEF4_BASE=/path/to/stm32cubef4")
-endif()
-
 # set default build type if none specified
 if(NOT CMAKE_BUILD_TYPE)
   message(STATUS "No build type was set. Setting build type to 'Release'")
@@ -48,20 +43,27 @@ project(
 message(STATUS "Configuring config.h header")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.h.in config.h @ONLY)
 
-# set STM32F4xx include paths
-set(
-  STM32CUBEF4_INCLUDE
-  ${STM32CUBEF4_BASE}/Drivers/CMSIS/Device/ST/STM32F4xx/Include
-  ${STM32CUBEF4_BASE}/Drivers/CMSIS/Core/Include
-)
-
 # global include for "config.h"
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-# Include the FreeRTOS source code
 include(FetchContent)
+message(STATUS "Fetching STM32F4xx headers ...")
+FetchContent_Declare(
+  stm32f4
+  GIT_REPOSITORY https://github.com/STMicroelectronics/STM32CubeF4.git
+  GIT_TAG v1.27.1
+)
+
+FetchContent_MakeAvailable(stm32f4)
+# set STM32F4xx include paths
+set(
+  STM32CUBEF4_INCLUDE
+  ${stm32f4_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+  ${stm32f4_SOURCE_DIR}/Drivers/CMSIS/Core/Include
+)
+# Include the FreeRTOS source code
+message(STATUS "Fetching FreeRTOS kernel ...")
 set(FREERTOS_CONFIG_FILE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include CACHE STRING "")
-message(STATUS "Fetching FreeRTOS")
 FetchContent_Declare(
   freertos_kernel
   GIT_REPOSITORY https://github.com/FreeRTOS/FreeRTOS-Kernel.git
