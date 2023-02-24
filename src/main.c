@@ -142,17 +142,37 @@ static void prvSetupHardware(void) {
   setup_status_leds();
 }
 
+/**
+ * @brief Dummy LED task.
+ *
+ * @param pv_params
+ */
+void vled_task(void *pv_params) {
+  uint8_t toggle = 0;
+  TickType_t tick_delay = pdMS_TO_TICKS(200);
+  while (1) {
+    toggle ^= 1;
+    GPIOD->BSRR = 1 << (15 + (16 * toggle));
+    vTaskDelay(tick_delay);
+    GPIOD->BSRR = 1 << (14 + (16 * toggle));
+    vTaskDelay(tick_delay);
+    GPIOD->BSRR = 1 << (13 + (16 * toggle));
+    vTaskDelay(tick_delay);
+    GPIOD->BSRR = 1 << (12 + (16 * toggle));
+    vTaskDelay(tick_delay);
+  }
+}
+
 int main(void) {
-  // TaskHandle_t xHandle = NULL;
-  // BaseType_t x_returned;
+  TaskHandle_t xHandle = NULL;
+  BaseType_t x_returned;
   prvSetupHardware();
-  // x_returned = xTaskCreate(vspinlock, "spinlock", configMINIMAL_STACK_SIZE,
-  //                          &delay_ms, tskIDLE_PRIORITY + 1, &xHandle);
-  // configASSERT(xHandle);
-  // if (x_returned != pdPASS) {
-  //   vTaskDelete(xHandle);
-  // }
-  configASSERT(0);
+  x_returned = xTaskCreate(vled_task, "led_task", configMINIMAL_STACK_SIZE,
+                           NULL, tskIDLE_PRIORITY + 1, &xHandle);
+  configASSERT(xHandle);
+  if (x_returned != pdPASS) {
+    vTaskDelete(xHandle);
+  }
   /* Start the scheduler. */
   vTaskStartScheduler();
   for (;;)
