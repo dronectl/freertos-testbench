@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+    {
+        "name": "Debug (openocd)",
+        "type": "cortex-debug",
+        "runToEntryPoint":"main",
+        "cwd": "${workspaceRoot}",
+        "rtos": "FreeRTOS",
+        "executable": "${workspaceRoot}/build/freertostb.elf",
+        "request": "launch",
+        "runToMain": true,
+        "servertype": "openocd",
+        "device": "STM32F411",
+        "showDevDebugOutput": "raw",
+        "configFiles": [
+            "interface/stlink.cfg",
+            "target/stm32f4x.cfg"
+        ],
+        "svdFile": "tools/stm32f411.svd"
+    }
+    ]
+}
