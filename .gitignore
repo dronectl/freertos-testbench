@@ -2,4 +2,4 @@
 *.hex
 *.out
 build/
-.vscode/
+/.vscode/
