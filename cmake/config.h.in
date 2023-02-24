@@ -1,0 +1,10 @@
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
+
+// clang-format off
+#define freertostb_VERSION_MAJOR @freertostb_VERSION_MAJOR@
+#define freertostb_VERSION_MINOR @freertostb_VERSION_MINOR@
+#define freertostb_VERSION_PATCH @freertostb_VERSION_PATCH@
+// clang-format on
+
+#endif // __CONFIG_H__
